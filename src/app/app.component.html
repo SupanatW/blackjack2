@@ -1,0 +1,67 @@
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
+<!-- * * * * * * * to get started with your project! * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+<div>
+  <tag-input  [(ngModel)]='playersName' modelAsStrings = 'true' [maxItems]='6' [removable]='true'>
+  </tag-input>
+  <div *ngFor="let playerName of playersName;">
+    <label>player Name: <span>{{ playerName }}</span></label>
+  </div>
+  <button [disabled]= "table.isStarted" (click)="onSubmit()">Add player</button>
+</div>
+<br>
+<button (click)="table.startGame()">Start!!</button>
+
+<mat-grid-list cols="2" rowHeight="1:1">
+  <mat-grid-tile class="my-grid-tile" >
+
+
+      <div >
+        <div *ngIf="table.isStarted">
+          <label>Dealer Card On Hand:</label>
+          <div *ngFor=" let card of table.dealer.cardOnHand; index as i">
+            <div>
+              {{card.point + " " + card.suit}}
+            </div>
+            <div *ngIf="table.dealer.faceDownCard" >X X</div>
+          </div>
+          <label>Point: <span>{{ table.dealer.calPoint() }}</span> </label>
+           <div><button [disabled] = "!table.isDealerTurn" (click) ="table.dealerDraw()">NEXT</button></div>
+
+        </div>
+
+    <!-- Dealer face down card -->
+
+    <div>
+
+      <div *ngFor="let player of table.players; index as index">
+        <br>
+        <label class = "playerInfo">player Name: <span>{{ player.name}} + Wallet: {{player.money}} <br>
+          
+          <span><label> Bet Size: </label>
+            <input [disabled]="table.isStarted" [(ngModel)]='player.betSize' type="number" min="10000" step="5000" max={{player.money}}></span>
+            <span><button [disabled]="table.isStarted" (click) = "table.bet(player)">BET</button></span><br>
+        </span> Status: <span> {{ player.status }}</span>
+          <span><br><button [disabled]="player.Status != 'playing'" (click)="table.hit(player)">Hit</button></span>
+          <span><button [disabled]="player.Status != 'playing'" (click)="table.stay(player)">Stay</button></span>
+          <span><button [disabled]="table.isStarted" (click)="table.removePlayer(player)">Stand up</button></span>
+       </label>
+        <br>
+        <label> Card On Hand <span><div *ngFor=" let card of player.cardOnHand">{{card.point + " " + card.suit}}</div></span></label>
+        <label>Point: <span>{{ player.getPointOnHand() }}</span> </label>
+      </div>
+    </div>
+
+  </div>
+  </mat-grid-tile>
+  <mat-grid-tile><textarea [(ngModel)] = 'logInput' style = 'width: 100%;  height: 100%'></textarea></mat-grid-tile>
+
+</mat-grid-list>
+
+<router-outlet></router-outlet>
